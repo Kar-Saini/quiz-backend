@@ -1,0 +1,103 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String     @id @unique @default(cuid())
+  email            String
+  password         String
+  phoneNumber      String     @unique
+  username         String?
+  userRole         UserRole   @default(USER)
+  gender           String?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  attemptedQuizes  Quiz[]     @relation(name: "attemptedQuiz")
+  registeredQuizes Quiz[]     @relation(name: "registeredUsers")
+  quizes           Quiz[]
+  answers          Answer[]
+  questions        Question[]
+  amount String
+  lockedAmount String
+
+  @@index([email])
+  @@index([phoneNumber])
+}
+
+model Quiz {
+  id                 String     @id @unique @default(cuid())
+  description        String?
+  creatorId          String
+  creator            User       @relation(fields: [creatorId], references: [id])
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime?
+  scheduledStartTime DateTime
+  scheduledEndTime   DateTime
+  quizPrice String
+  rewardValue String
+  questions          Question[]
+  status             QuizStatus @default(active)
+  registeredUsers    User[]     @relation(name: "registeredUsers")
+  attemptedUsers     User[]     @relation(name: "attemptedQuiz")
+}
+
+model Question {
+  id        String   @id @unique @default(cuid())
+  question  String
+  creatorId String
+  creator   User     @relation(fields: [creatorId], references: [id])
+  createdAt DateTime @default(now())
+  quizId    String
+  quiz      Quiz     @relation(fields: [quizId], references: [id])
+  options   Option[]
+  answers   Answer[]
+}
+
+model Option {
+  id         String   @id @unique @default(cuid())
+  option     String
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id])
+  createdAt  DateTime @default(now())
+  isCorrect  Boolean
+  answers    Answer[]
+}
+
+model Answer {
+  id         String   @id @unique @default(cuid())
+  optionId   String
+  option     Option   @relation(fields: [optionId], references: [id])
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id])
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+enum QuizStatus {
+  active
+  inactive
+  completed
+}
+
+
+model Transaction{
+  id String @id @unique @default(cuid())
+
+}
