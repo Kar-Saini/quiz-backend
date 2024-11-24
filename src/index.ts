@@ -27,12 +27,15 @@ app.post("/register", async (req, res) => {
       return;
     }
     const hashedPassword = await bcrypt.hash(parsedData.data?.password, 10);
+    //TODO : Fetch amount from wallet
     const user = await prisma.user.create({
       data: {
         email: parsedData.data?.email,
         password: hashedPassword,
         phoneNumber: parsedData.data?.phoneNumber,
         userRole: parsedData.data.userRole === "ADMIN" ? "ADMIN" : "USER",
+        amount: "10000",
+        lockedAmount: "5000",
       },
     });
     res.json({ message: "User added", id: user.id, userRole: user.userRole });

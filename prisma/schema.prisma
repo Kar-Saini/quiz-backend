@@ -14,22 +14,25 @@ datasource db {
 }
 
 model User {
-  id               String     @id @unique @default(cuid())
-  email            String
-  password         String
-  phoneNumber      String     @unique
-  username         String?
-  userRole         UserRole   @default(USER)
-  gender           String?
-  createdAt        DateTime   @default(now())
-  updatedAt        DateTime   @updatedAt
-  attemptedQuizes  Quiz[]     @relation(name: "attemptedQuiz")
-  registeredQuizes Quiz[]     @relation(name: "registeredUsers")
-  quizes           Quiz[]
-  answers          Answer[]
-  questions        Question[]
-  amount String
-  lockedAmount String
+  id                String        @id @unique @default(cuid())
+  email             String
+  password          String
+  phoneNumber       String        @unique
+  username          String?
+  userRole          UserRole      @default(USER)
+  gender            String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  attemptedQuizes   Quiz[]        @relation(name: "attemptedQuiz")
+  registeredQuizes  Quiz[]        @relation(name: "registeredUsers")
+  quizes            Quiz[]
+  answers           Answer[]
+  questions         Question[]
+  transactions      Transaction[]
+  onRampTransactions OnRampTransaction[]
+  emailVerification Boolean       @default(false)
+  amount            String
+  lockedAmount      String
 
   @@index([email])
   @@index([phoneNumber])
@@ -44,8 +47,8 @@ model Quiz {
   updatedAt          DateTime?
   scheduledStartTime DateTime
   scheduledEndTime   DateTime
-  quizPrice String
-  rewardValue String
+  quizPrice          String
+  rewardValue        String
   questions          Question[]
   status             QuizStatus @default(active)
   registeredUsers    User[]     @relation(name: "registeredUsers")
@@ -84,20 +87,38 @@ model Answer {
   user       User     @relation(fields: [userId], references: [id])
   createdAt  DateTime @default(now())
 }
-
 enum UserRole {
   ADMIN
   USER
 }
-
 enum QuizStatus {
   active
   inactive
   completed
 }
-
-
-model Transaction{
-  id String @id @unique @default(cuid())
-
+model Transaction {
+  id              String     @id @unique @default(cuid())
+  amount          String
+  transactionType TrxnType
+  createdAt       DateTime   @default(now())
+  status          TrxnStatus
+  userId          String
+  user            User       @relation(fields: [userId], references: [id])
+}
+model OnRampTransaction{
+  id String @id @default(cuid()) @unique
+  amount String
+  provider String
+  userId String 
+  status TrxnStatus
+  user User @relation(fields: [userId], references: [id])
+}
+enum TrxnType {
+  CREDIT
+  DEBIT
+}
+enum TrxnStatus {
+  Pending
+  Completed
+  Failed
 }

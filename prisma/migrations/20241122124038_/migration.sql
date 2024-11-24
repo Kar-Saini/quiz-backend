@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `User` ALTER COLUMN `amount` DROP DEFAULT,
+    ALTER COLUMN `lockedAmount` DROP DEFAULT;

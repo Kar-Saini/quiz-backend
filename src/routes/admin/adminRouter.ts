@@ -25,6 +25,7 @@ adminRouter.post("/createQuiz", adminAuthMiddleware, async (req, res) => {
         scheduledStartTime,
         creatorId: userId,
         rewardValue,
+        quizPrice: "10000",
       },
     });
     console.log(quiz);
