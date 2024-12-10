@@ -38,12 +38,15 @@ app.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* 
             return;
         }
         const hashedPassword = yield bcrypt_1.default.hash((_b = parsedData.data) === null || _b === void 0 ? void 0 : _b.password, 10);
+        //TODO : Fetch amount from wallet
         const user = yield utils_1.default.user.create({
             data: {
                 email: (_c = parsedData.data) === null || _c === void 0 ? void 0 : _c.email,
                 password: hashedPassword,
                 phoneNumber: (_d = parsedData.data) === null || _d === void 0 ? void 0 : _d.phoneNumber,
                 userRole: parsedData.data.userRole === "ADMIN" ? "ADMIN" : "USER",
+                amount: "10000",
+                lockedAmount: "5000",
             },
         });
         res.json({ message: "User added", id: user.id, userRole: user.userRole });
@@ -89,11 +92,3 @@ app.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 }));
 app.use("/user", userRouter_1.default);
 app.use("/admin", adminRouter_1.default);
-app.delete("/question/:questionId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const questionId = req.params.questionId;
-        console.log(questionId);
-        res.send("Hello");
-    }
-    catch (error) { }
-}));

@@ -33,4 +33,36 @@ userRouter.get("/", userAuthMiddleware_1.default, (req, res) => __awaiter(void 0
         updatedAt: user.updatedAt,
     });
 }));
+userRouter.get("/quizes", userAuthMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const quizes = yield utils_1.default.quiz.findMany({
+            select: {
+                description: true,
+                scheduledStartTime: true,
+                scheduledEndTime: true,
+                status: true,
+                _count: {
+                    select: {
+                        attemptedUsers: true,
+                        registeredUsers: true,
+                        questions: true,
+                    },
+                },
+            },
+        });
+        res.json(quizes);
+    }
+    catch (error) { }
+}));
+userRouter.get("/quiz/:quizId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const quizId = req.params.quizId;
+        const questions = yield utils_1.default.question.findMany({
+            where: { quizId },
+            select: { question: true, options: true },
+        });
+        res.json(questions);
+    }
+    catch (error) { }
+}));
 exports.default = userRouter;

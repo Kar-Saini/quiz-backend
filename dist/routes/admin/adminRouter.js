@@ -21,7 +21,7 @@ exports.default = adminRouter;
 adminRouter.post("/createQuiz", adminAuthMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log("Inside crete quiz");
-        const { description, scheduledStartTime, scheduledEndTime, userId } = req.body;
+        const { description, scheduledStartTime, scheduledEndTime, userId, rewardValue, } = req.body;
         console.log(description, scheduledStartTime, scheduledEndTime, req.userId);
         const quiz = yield utils_1.default.quiz.create({
             data: {
@@ -29,6 +29,8 @@ adminRouter.post("/createQuiz", adminAuthMiddleware_1.default, (req, res) => __a
                 scheduledEndTime,
                 scheduledStartTime,
                 creatorId: userId,
+                rewardValue,
+                quizPrice: "10000",
             },
         });
         console.log(quiz);
@@ -71,10 +73,98 @@ adminRouter.post("/addQuestion", (req, res) => __awaiter(void 0, void 0, void 0,
     }
 }));
 //deleteQuestion
-adminRouter.delete("/:questionId", adminAuthMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+adminRouter.delete("/question/:questionId", adminAuthMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const questionId = req.params.questionId;
-        console.log();
+        const question = yield utils_1.default.question.findUnique({
+            where: { id: questionId },
+        });
+        if (!question) {
+            res.status(401).json({ message: "Invalid question id" });
+            return;
+        }
+        yield utils_1.default.question.delete({ where: { id: questionId } });
+        res.json({ message: "Question deleted" });
     }
-    catch (error) { }
+    catch (error) {
+        res.status(401).json({ message: "Error while deleteing question" });
+    }
+}));
+//delete quiz
+adminRouter.delete("/quiz/:quizId", adminAuthMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const quizId = req.params.quizId;
+        const quiz = yield utils_1.default.quiz.findUnique({
+            where: { id: quizId },
+        });
+        if (!quiz) {
+            res.status(401).json({ message: "Invalid quiz id" });
+            return;
+        }
+        yield utils_1.default.quiz.delete({ where: { id: quizId } });
+        res.json({ message: "Quiz deleted" });
+    }
+    catch (error) {
+        res.status(401).json({ message: "Error while deleteing quiz" });
+    }
+}));
+//updateQuiz
+adminRouter.post("/quiz/:quizId", adminAuthMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const quizId = req.params.quizId;
+        const quiz = yield utils_1.default.quiz.findUnique({
+            where: { id: quizId },
+        });
+        if (!quiz) {
+            res.status(401).json({ message: "Invalid quiz id" });
+        }
+        const { description, scheduledStartTime, scheduledEndTime } = req.body;
+        const updateData = {};
+        if (description !== undefined)
+            updateData.description = description;
+        if (scheduledStartTime !== undefined)
+            updateData.scheduledStartTime = scheduledStartTime;
+        if (scheduledEndTime !== undefined)
+            updateData.scheduledEndTime = scheduledEndTime;
+        yield utils_1.default.quiz.update({
+            where: { id: quizId },
+            data: updateData,
+        });
+        res.json({ message: "Quiz updated" });
+    }
+    catch (error) {
+        res.status(401).json({ message: "Error while updating quiz" });
+    }
+}));
+//updateQuizQuestion
+adminRouter.post("/question/:questionId", adminAuthMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    try {
+        const questionId = req.params.questionId;
+        const questionExists = yield utils_1.default.question.findUnique({
+            where: { id: questionId },
+        });
+        if (!questionExists) {
+            res.status(401).json({ message: "Invalid question id" });
+        }
+        const { question, options, } = req.body;
+        const updateQuestion = {};
+        if (question !== undefined)
+            updateQuestion.question = question;
+        if (options.length > 0) {
+            updateQuestion.options = options;
+        }
+        yield utils_1.default.question.update({
+            where: { id: questionId },
+            data: {
+                question: updateQuestion.question,
+            },
+        });
+        (_a = updateQuestion.options) === null || _a === void 0 ? void 0 : _a.map((option) => __awaiter(void 0, void 0, void 0, function* () { }));
+        //TODO : Update options efficiently
+        res.json({ message: "Quiz updated" });
+    }
+    catch (error) {
+        res.status(401).json({ message: "Error while updating quiz" });
+    }
 }));
