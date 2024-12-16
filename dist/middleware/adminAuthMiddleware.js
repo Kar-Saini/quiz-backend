@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = adminAuthMiddleware;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 function adminAuthMiddleware(req, res, next) {
     var _a;
@@ -25,4 +26,3 @@ function adminAuthMiddleware(req, res, next) {
     }
     catch (error) { }
 }
-exports.default = adminAuthMiddleware;

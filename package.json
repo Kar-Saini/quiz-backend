@@ -17,10 +17,11 @@
     "brcypt": "^1.0.1",
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",
-    "prisma": "^5.22.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/jsonwebtoken": "^9.0.7"
+    "@types/jsonwebtoken": "^9.0.7",
+    "prisma": "^6.0.1",
+    "typescript": "^5.7.2"
   }
 }

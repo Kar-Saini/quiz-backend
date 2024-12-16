@@ -20,12 +20,14 @@ app.listen(PORT, () => {
 
 //Register
 app.post("/register", async (req, res) => {
+  console.log("iside register")
   try {
     const parsedData = UserRegisterSchema.safeParse(req.body);
     if (!parsedData.success) {
       res.status(400).json({ error: parsedData.error?.errors[0].message });
       return;
     }
+    console.log(parsedData);
     const hashedPassword = await bcrypt.hash(parsedData.data?.password, 10);
     //TODO : Fetch amount from wallet
     const user = await prisma.user.create({
@@ -40,7 +42,7 @@ app.post("/register", async (req, res) => {
     });
     res.json({ message: "User added", id: user.id, userRole: user.userRole });
   } catch (error) {
-    res.json({ message: "Something went wring" }).status(403);
+    res.json({ message: "Something went wrong" }).status(403);
   }
 });
 

@@ -31,12 +31,14 @@ app.listen(PORT, () => {
 //Register
 app.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d;
+    console.log("iside register");
     try {
         const parsedData = UserSchema_1.UserRegisterSchema.safeParse(req.body);
         if (!parsedData.success) {
             res.status(400).json({ error: (_a = parsedData.error) === null || _a === void 0 ? void 0 : _a.errors[0].message });
             return;
         }
+        console.log(parsedData);
         const hashedPassword = yield bcrypt_1.default.hash((_b = parsedData.data) === null || _b === void 0 ? void 0 : _b.password, 10);
         //TODO : Fetch amount from wallet
         const user = yield utils_1.default.user.create({
@@ -52,17 +54,17 @@ app.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         res.json({ message: "User added", id: user.id, userRole: user.userRole });
     }
     catch (error) {
-        res.json({ message: "Something went wring" }).status(403);
+        res.json({ message: "Something went wrong" }).status(403);
     }
 }));
 //Signin
 app.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _e, _f;
+    var _a, _b;
     try {
         const parsedData = UserSchema_1.UserSignInSchema.safeParse(req.body);
-        console.log((_e = parsedData.error) === null || _e === void 0 ? void 0 : _e.errors[0].message);
+        console.log((_a = parsedData.error) === null || _a === void 0 ? void 0 : _a.errors[0].message);
         if (!parsedData.success) {
-            res.status(400).json({ error: (_f = parsedData.error) === null || _f === void 0 ? void 0 : _f.errors[0].message });
+            res.status(400).json({ error: (_b = parsedData.error) === null || _b === void 0 ? void 0 : _b.errors[0].message });
             return;
         }
         const userExists = yield utils_1.default.user.findUnique({
