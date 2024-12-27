@@ -20,7 +20,7 @@ app.listen(PORT, () => {
 
 //Register
 app.post("/register", async (req, res) => {
-  console.log("iside register")
+  console.log("iside register");
   try {
     const parsedData = UserRegisterSchema.safeParse(req.body);
     if (!parsedData.success) {
