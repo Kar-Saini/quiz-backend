@@ -5,7 +5,7 @@ import bcrypt from "bcrypt";
 import { UserRegisterSchema, UserSignInSchema } from "./types/UserSchema";
 import jwt from "jsonwebtoken";
 import prisma from "./lib/utils";
-const PORT = process.env.PORT || 3001;
+const PORT = 3000;
 
 const app = express();
 app.use(express.json());
